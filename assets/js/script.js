@@ -2,23 +2,21 @@ var saveBtn9 = document.querySelector("#saveBtn9")
 var description9 = document.querySelector("#description9")
 var currentDay = document.querySelector("#currentDay");
 var now = moment().format('MMMM Do YYYY');
+var savedTaskEl = document.querySelector("#savedTaskSection")
 currentDay.textContent = now;
 listOfSavedTasks = [];
 var savedTaskCounter = 0;
+listOfSomething = [];
 
 var descriptionClickHandler = function () {
-    console.log("clicked desc");
     $(this).replaceWith("<textarea>");
 }
 
 var saveClickHandler = function () {
     var textArea = document.querySelector("textarea");
-    console.log(textArea.value);
-    console.log("clicked save");
-    var timeBlock = description9.parentNode;
-
-    console.log(timeBlock.dataset.hour)
-    saveTaskToLocal()
+    var hour = "09";
+    var description = textArea.value;
+    saveTaskToLocal(hour, description)
 }
 
 var checkForSavedTasks = function () {
@@ -29,19 +27,19 @@ var checkForSavedTasks = function () {
     console.log("Saved Tasks found!");
 
     savedTasks = JSON.parse(savedTasks);
+    console.log(savedTasks)
     for (var i = 0; i < savedTasks.length; i++) {
         listOfSavedTasks.push(savedTasks[i]);
         var storedDescription = savedTasks[i]["description"];
         var storedHour = savedTasks[i]["hour"];
-        var elements = document.getElementsByClassName('time-block');
-        for (var i = 0; i < elements.length; i++) {
-            if (storedHour == elements[i].dataset.hour) {
-                $(elements[i]).append(storedDescription)
-            }
-        }
+        var savedTaskListEl = ("You had a task " + storedDescription + "saved for " + storedHour + "<br>");
+        listOfSomething.push(savedTaskListEl);
+
         savedTaskCounter++
 
     }
+    console.log(listOfSomething)
+    savedTaskEl.append(listOfSomething)
 }
 
 var saveTaskToLocal = function (hour, description) {
@@ -50,17 +48,18 @@ var saveTaskToLocal = function (hour, description) {
         "description": description,
         "id": savedTaskCounter
     };
-    // listOfHighScores.push(highScoreObj);
-    // listOfHighScores = JSON.stringify(listOfHighScores);
-    // localStorage.setItem("scores", listOfHighScores);
-    // time = 99999
+    console.log(taskObj)
+    listOfSavedTasks.push(taskObj);
+    listOfSavedTasks = JSON.stringify(listOfSavedTasks);
+    localStorage.setItem("tasks", listOfSavedTasks);
+
 }
 
 
 var colorCodeTimes = function () {
     var elements = document.getElementsByClassName('time-block');
     for (var i = 0; i < elements.length; i++) {
-        console.log(elements[i].dataset.hour, moment().format('H'));
+
         if (moment().format('H') > elements[i].dataset.hour) {
             $(elements[i]).addClass("past")
         }
@@ -72,7 +71,7 @@ var colorCodeTimes = function () {
         }
     }
 }
-
+checkForSavedTasks();
 colorCodeTimes();
 
 
